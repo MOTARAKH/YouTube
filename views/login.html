@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 50px;
+    }
+    form {
+      max-width: 400px;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 10px 15px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .response {
+      margin-top: 20px;
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h2>Login</h2>
+  <form id="loginForm">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
+    
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+    
+    <button type="submit">Login</button>
+  </form>
+  <div class="response" id="response"></div>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const responseDiv = document.getElementById('response');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        const response = await fetch('/api/users/userlogin', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, password }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          responseDiv.textContent = 'Login successful! Redirecting to YouTube connection...';
+          responseDiv.style.color = 'green';
+
+          // Redirect to the YouTube connection page after a short delay
+          setTimeout(() => {
+            window.location.href = '/connect-youtube.html'; // Adjust the URL as needed
+          }, 2000); // 2-second delay for feedback
+        } else {
+          responseDiv.textContent = data.error || 'Login failed!';
+          responseDiv.style.color = 'red';
+        }
+      } catch (error) {
+        responseDiv.textContent = 'An error occurred: ' + error.message;
+      }
+    });
+  </script>
+</body>
+</html>
